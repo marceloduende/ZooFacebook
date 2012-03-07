@@ -47,7 +47,7 @@ package
 		 */		
 		private function loggedin(e:Event):void{
 			fbLogin.removeEventListener(Event.COMPLETE, loggedin);
-			stage.addEventListener(MouseEvent.CLICK, requestNewAlbum);
+			//stage.addEventListener(MouseEvent.CLICK, postPhoto);
 			//requestAID();
 			//requestFriends();
 			//requestProfilePicture();
@@ -132,7 +132,7 @@ package
 		 * To upload photos is required a mouse event for that.
 		 * 
 		 */		
-		private function requestNewAlbum(e:MouseEvent):void{
+		private function postPhoto(e:MouseEvent):void{
 			
 			var _params:Object = new Object();
 			
@@ -156,6 +156,9 @@ package
 			var bm:Bitmap = new Bitmap(imgData);
 			return bm;
 		}
+		
+		
+		
 		
 		/*********************** REQUESTING PROFILE PHOTO ************************/
 		
