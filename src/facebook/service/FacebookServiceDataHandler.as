@@ -28,7 +28,7 @@ package facebook.service
 		 * @param fail
 		 * 
 		 */		
-		public function handleAlbumPhotos(albums:Object, fail:Object):void{
+		public function handleAID(albums:Object, fail:Object):void{
 			if(albums != null){
 				_facebookPhotoAlbums = new ArrayCollection(albums as Array);
 				var pids:Vector.<String> = new Vector.<String>();
@@ -102,6 +102,7 @@ package facebook.service
 			
 			dispatchEvent(new Event(Event.COMPLETE));
 		}
+		
 		
 		
 		

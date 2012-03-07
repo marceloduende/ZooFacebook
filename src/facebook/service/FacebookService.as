@@ -16,7 +16,7 @@ package facebook.service
 		 * @param callback callback function
 		 * 
 		 */		
-		public function getAlbumPhotos(callback:Function):void{
+		public function getAID(callback:Function):void{
 			var fql:String = "select name, aid, cover_pid, size from album where owner = me()";
 			Facebook.fqlQuery(fql, callback);
 		}
@@ -30,6 +30,9 @@ package facebook.service
 		 * 
 		 * Getting Album covers
 		 * 
+		 * permitted parameters
+		 * https://developers.facebook.com/docs/reference/fql/album/
+		 * 
 		 */		
 		public function getPhotoURL(pids:Vector.<String>, callback:Function):void
 		{
@@ -40,7 +43,6 @@ package facebook.service
 				for (var i:int = 0; i < len; i++)
 					fql = fql + " OR pid = '" + pids[i] + "'";
 			}
-			
 			Facebook.fqlQuery(fql, callback);
 		}
 		
@@ -56,13 +58,34 @@ package facebook.service
 		}
 		
 		
+		/*********************** PROFILE PHOTO ************************/
+		
+		
+		/**
+		 * 
+		 * @param size = "small", "square" and "large" 
+		 * 
+		 */		
+		public function getProfilePicture(size:String):String{
+			return Facebook.getImageUrl(Facebook.getAuthResponse().uid, size);
+		}
+		
+		
 		/*********************** FRIENDS PHOTOS ************************/
 		
 		public function loadFriends(returnHandler:Function):void
 		{
 			Facebook.api("/me/friends", returnHandler);
 		}
-		
+		/**
+		 * 
+		 * @param friendIds
+		 * @param returnHandler
+		 * 
+		 * permitted parameters
+		 * https://developers.facebook.com/docs/reference/fql/
+		 * 
+		 */		
 		public function getFriendImageUrls(friendIds:Array, returnHandler:Function):void
 		{
 			var fql:String = "SELECT pic_small FROM user WHERE uid IN (" + friendIds.join(",") + ")";

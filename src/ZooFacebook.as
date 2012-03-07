@@ -7,10 +7,15 @@ package
 	import facebook.service.FacebookService;
 	import facebook.service.FacebookServiceDataHandler;
 	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
+	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -18,9 +23,9 @@ package
 	[SWF(backgroundColor="#FFFFFF", frameRate="31", width="520", height="600")]
 	public class ZooFacebook extends Sprite
 	{
-		private var startFacebookLogin:FacebookLogin = new FacebookLogin();
-		private var facebookService:FacebookService = new FacebookService();
-		private var facebookServiceHandler:FacebookServiceDataHandler = new FacebookServiceDataHandler();
+		private var fbLogin:FacebookLogin = new FacebookLogin();
+		private var fbService:FacebookService = new FacebookService();
+		private var fbServiceHandler:FacebookServiceDataHandler = new FacebookServiceDataHandler();
 		private var photoAlbums:ArrayCollection;
 		private var photos:ArrayCollection;
 		
@@ -30,8 +35,8 @@ package
 		{
 			MonsterDebugger.initialize(this);
 			MonsterDebugger.trace(this, "version .3");
-			startFacebookLogin.loginToFacebook();
-			startFacebookLogin.addEventListener(Event.COMPLETE, loggedin);
+			fbLogin.loginToFacebook();
+			fbLogin.addEventListener(Event.COMPLETE, loggedin);
 		}
 		
 		
@@ -41,8 +46,11 @@ package
 		 * 
 		 */		
 		private function loggedin(e:Event):void{
-			//parseAlbums();
-			parseFriends();
+			fbLogin.removeEventListener(Event.COMPLETE, loggedin);
+			stage.addEventListener(MouseEvent.CLICK, requestNewAlbum);
+			//requestAID();
+			//requestFriends();
+			//requestProfilePicture();
 		}
 		
 		
@@ -53,22 +61,23 @@ package
 		 * Parse the album cover information
 		 * 
 		 */		
-		private function parseAlbums():void{
-			facebookService.getAlbumPhotos(facebookServiceHandler.handleAlbumPhotos);
-			facebookServiceHandler.addEventListener(Event.COMPLETE, getAlbumCovers);
+		private function requestAID():void{
+			fbService.getAID(fbServiceHandler.handleAID);
+			fbServiceHandler.addEventListener(Event.COMPLETE, getAlbumCovers);
 		}
 		
 		/**
 		 * 
 		 * This method is responsible for getting the albums id (aid);
+		 * photoAlbums is an ArrayCollection which gets all the aids from my albums
 		 * 
 		 */		
 		private function getAlbumCovers(e:Event):void{
-			photoAlbums = facebookServiceHandler._facebookPhotoAlbums;
+			photoAlbums = fbServiceHandler._facebookPhotoAlbums;
 			/*for(var i:int = 0; i < photoAlbums.length; i++){
 				MonsterDebugger.trace(this, photoAlbums[i].aid)
 			}*/
-			facebookService.getPhotos(photoAlbums[0].aid, getAlbumPhotos);
+			fbService.getPhotos(photoAlbums[0].aid, getAlbumPhotos);
 		}
 		
 		/**
@@ -92,17 +101,17 @@ package
 		}
 		
 		
-		/*********************** FRIENDS PHOTOS ************************/
+		/*********************** FRIENDS PROFILE PHOTOS ************************/
 		
-		private function parseFriends():void{
+		private function requestFriends():void{
 			MonsterDebugger.trace(this, "friends Parsing");
-			facebookService.loadFriends(facebookServiceHandler.handleFriendsLoaded);
-			facebookServiceHandler.addEventListener(Event.COMPLETE, friendsLoaded);
+			fbService.loadFriends(fbServiceHandler.handleFriendsLoaded);
+			fbServiceHandler.addEventListener(Event.COMPLETE, friendsLoaded);
 		}
 		
 		private function friendsLoaded(e:Event):void{
 			
-			var len:uint = facebookServiceHandler._friends.length;
+			var len:uint = fbServiceHandler._friends.length;
 			for (var i:uint = 0; i < len; i++)
 			{
 				//_friends[i].imageUrl = friendImages[i].pic_small;
@@ -114,6 +123,47 @@ package
 			
 		}
 		
+		
+		/*********************** POSTING PHOTO ************************/
+		
+		
+		/**
+		 * 
+		 * To upload photos is required a mouse event for that.
+		 * 
+		 */		
+		private function requestNewAlbum(e:MouseEvent):void{
+			
+			var _params:Object = new Object();
+			
+			_params.access_token = Facebook.getAuthResponse().accessToken;
+			_params.message      = "my album test";
+			_params.image        = fakeBM();
+			_params.fileName	 = "test.jpg";
+			
+			try{
+				Facebook.api("me/photos", imagePostCallBack, _params, URLRequestMethod.POST);
+			} catch (error:Error){
+				MonsterDebugger.trace(this, "Error: " + error);
+			}
+			
+		}
+		
+		private function imagePostCallBack(success:Object, fail:Object):void{}
+		
+		private function fakeBM():Bitmap{
+			var imgData:BitmapData = new BitmapData(100, 100, false, 0xFF00FF00);
+			var bm:Bitmap = new Bitmap(imgData);
+			return bm;
+		}
+		
+		/*********************** REQUESTING PROFILE PHOTO ************************/
+		
+		private function requestProfilePicture():void{
+			var loader:Loader = new Loader();
+			loader.load(new URLRequest(fbService.getProfilePicture("large")));
+			addChild(loader);
+		}
 		
 		
 	}
