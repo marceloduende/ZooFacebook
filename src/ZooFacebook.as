@@ -143,7 +143,10 @@ package
 			_params.fileName	= "test.jpg";
 			
 			try{
-				Facebook.api("me/photos", imagePostCal
+				Facebook.api("me/photos", imagePostCallBack, _params, URLRequestMethod.POST);
+			} catch (error:Error){
+				MonsterDebugger.trace(this, "Error: " + error);
+			}
 			
 		}
 		
