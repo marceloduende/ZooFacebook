@@ -74,9 +74,9 @@ package
 		 */		
 		private function getAlbumCovers(e:Event):void{
 			photoAlbums = fbServiceHandler._facebookPhotoAlbums;
-			/*for(var i:int = 0; i < photoAlbums.length; i++){
+			for(var i:int = 0; i < photoAlbums.length; i++){
 				MonsterDebugger.trace(this, photoAlbums[i].aid)
-			}*/
+			}
 			fbService.getPhotos(photoAlbums[0].aid, getAlbumPhotos);
 		}
 		
@@ -115,11 +115,9 @@ package
 			for (var i:uint = 0; i < len; i++)
 			{
 				//_friends[i].imageUrl = friendImages[i].pic_small;
-				//MonsterDebugger.trace(this, facebookServiceHandler._friends[i].pic_small);
+				MonsterDebugger.trace(this, facebookServiceHandler._friends[i].pic_small);
 			}
 			
-			
-			//MonsterDebugger.trace(this, "friends Loaded: " + facebookServiceHandler._friends);
 			
 		}
 		
@@ -127,7 +125,10 @@ package
 		/*********************** POSTING PHOTO ************************/
 		
 		
-		/**
+		/**lBack, _params, URLRequestMethod.POST);
+			} catch (error:Error){
+				MonsterDebugger.trace(this, "Error: " + error);
+			}
 		 * 
 		 * To upload photos is required a mouse event for that.
 		 * 
@@ -139,13 +140,10 @@ package
 			_params.access_token = Facebook.getAuthResponse().accessToken;
 			_params.message      = "my album test";
 			_params.image        = fakeBM();
-			_params.fileName	 = "test.jpg";
+			_params.fileName	= "test.jpg";
 			
 			try{
-				Facebook.api("me/photos", imagePostCallBack, _params, URLRequestMethod.POST);
-			} catch (error:Error){
-				MonsterDebugger.trace(this, "Error: " + error);
-			}
+				Facebook.api("me/photos", imagePostCal
 			
 		}
 		
