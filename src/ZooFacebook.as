@@ -125,10 +125,7 @@ package
 		/*********************** POSTING PHOTO ************************/
 		
 		
-		/**lBack, _params, URLRequestMethod.POST);
-			} catch (error:Error){
-				MonsterDebugger.trace(this, "Error: " + error);
-			}
+		/**
 		 * 
 		 * To upload photos is required a mouse event for that.
 		 * 
